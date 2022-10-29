@@ -31,7 +31,7 @@
             crossorigin="anonymous"></script>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
     <a class="navbar-brand" href="#">Art Appraisal service</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02"
             aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,9 +53,35 @@
                 <a class="nav-link" href="{{route("music.index")}}">Music</a>
             </li>
         </ul>
+        <ul class="navbar-nav d-flex">
+            @guest
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('login')}}">Login</a></li>
+                @if(Route::has('register'))
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{route('register')}}">Register</a></li>
+                @endif
+            @else
+                <li class="nav-item dropdown">
+                    <a id="navbarDropdownMenuLink" class="nav-link dropdown-toggle" href="#" role="button"
+                       data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        {{Auth::user()->name}}<span class="caret"></span>
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item"
+                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Exit</a>
+                        <form id="logout-form" action="{{route('logout')}}" method="post" style="display: none;">
+                            @csrf
+                        </form>
+                    </div>
+                </li>
+            @endif
+        </ul>
     </div>
+
 </nav>
-<div class="container">
+<div class="container py-4">
     @yield('content')
 </div>
 </body>

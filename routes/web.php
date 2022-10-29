@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function(){
     return view('welcome');
-});
+})->name('home');
 Route::resource('arts','App\Http\Controllers\ArtController');
 Route::resource('literatures','App\Http\Controllers\LiteratureController');
 Route::resource('music','App\Http\Controllers\MusicController');
@@ -23,3 +23,5 @@ Route::resource('music','App\Http\Controllers\MusicController');
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Auth::routes();
