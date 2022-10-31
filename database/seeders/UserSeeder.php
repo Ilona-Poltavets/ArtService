@@ -53,7 +53,7 @@ class UserSeeder extends Seeder
             'user_id'=>$user3->id,
             'nationality'=>'Ukrainian',
             'phone_number'=>'380123456789',
-            'category'=>'arts',
+            'category'=>'art',
         ]);
         $user3->roles()->attach($expert);
 

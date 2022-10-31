@@ -4,17 +4,12 @@
     @foreach($posts as $post)
 
         <div class="content-tile">
-            <a class="content-tile__link" href="{{route('posts.show',$post)}}">
+            <a class="content-tile__link" href="{{route('posts.show',$post->id)}}">
                 <h2 class="content-tile__title">{{$post->title}}</h2>
                 <hr>
             </a>
                 <div class="content-tile__main-content">
                     @if($post->category=='literature')
-                        {{--                    @php--}}
-                        {{--                        $pdfParser = new Smalot\PdfParser\Parser();--}}
-                        {{--                        $pdf = $pdfParser->parseFile($post->pathFile);--}}
-                        {{--                        $content = $pdf->getText();--}}
-                        {{--                    @endphp--}}
                         <div class="content-tile__main-content">
                             <img class="content-tile__pdf_icon" src="{{asset('/css/icons/pdf.png')}}"
                                  alt="{{$post->title}}"/><a
@@ -33,9 +28,8 @@
                 </div>
                 <hr>
                 <div class="content-tile__footer">
-                    Author: {{$post->user->name}} {{$post->user->surname}}
+                    Author:<a href="{{route('get_posts',$post->user_id)}}"> {{$post->user->name}} {{$post->user->surname}}</a>
                 </div>
-
         </div>
 
     @endforeach

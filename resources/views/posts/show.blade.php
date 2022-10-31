@@ -3,6 +3,7 @@
 @section('content')
     <div class="show-content">
         <h1 class="show-content__header">{{$post->title}}</h1>
+        <hr>
         <div class="show-content__content">
             @if($post->category=='literature')
             <object class="show-content__preview" data='{{asset($post->pathFile)}}' type="application/pdf">
@@ -23,8 +24,15 @@
                 </div>
             @endif
         </div>
-        <div class="show-content__about-author">{{$post->user->name}} {{$post->user->surname}}</div>
-        <div class="show-content__comments"></div>
+        <div class="show-content__about-author"><a href="{{route('get_posts',$post->user_id)}}">{{$post->user->name}} {{$post->user->surname}}</a></div>
+        <hr>
+        <div class="show-content__comments">
+            <h2>Comments</h2>
+            <hr>
+            <div class="show-content__comment">
+
+            </div>
+        </div>
     </div>
 
 @endsection

@@ -19,9 +19,9 @@ class PostController extends Controller
         'file' => 'required|mimetypes:application/pdf,image/jpeg,image/png,audio/mpeg'
     ];
 
-    public function index($id)
+    public function index()
     {
-        $data['posts'] = Post::where('user_id',$id)->paginate(10);
+        $data['posts'] = Post::paginate(10);
         return view('posts.index', $data);
     }
 

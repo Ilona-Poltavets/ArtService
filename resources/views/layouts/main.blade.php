@@ -37,7 +37,7 @@
 <nav class="navbar navbar-dark bg-primary navbar-expand-lg">
 
     <div class="container-fluid">
-        <a class="navbar-brand" href="{{route('home')}}">Art Appraisal Service</a>
+        <a class="navbar-brand" href="{{route('posts.index')}}">Art Appraisal Service</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
                 aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -45,11 +45,13 @@
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{{route('home')}}">Home</a>
+                    <a class="nav-link" href="{{route('posts.index')}}">Home</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{route('posts.index')}}">Arts</a>
-                </li>
+                @if(\Illuminate\Support\Facades\Auth::user() && \Illuminate\Support\Facades\Auth::user()->hasRole('admin'))
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{route('adminPanel')}}">Admin panel</a>
+                    </li>
+                @endif
             </ul>
             <ul class="navbar-nav ms-auto">
                 @guest
@@ -67,18 +69,28 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <li>
-                                <a class="dropdown-item" href="{{route('profile')}}">Profile</a>
-                            </li>
-                            <li>
                                 <a class="dropdown-item"
-                                   href="{{route('myPosts',\Illuminate\Support\Facades\Auth::user()->id)}}">
-                                    My posts
-                                </a>
+                                   href="{{route('profile',\Illuminate\Support\Facades\Auth::user()->id)}}">Profile</a>
                             </li>
                             @if(\Illuminate\Support\Facades\Auth::user()->hasPermission('add_post'))
                                 <li>
+                                    <a class="dropdown-item"
+                                       href="{{route('get_posts',\Illuminate\Support\Facades\Auth::user()->id)}}">
+                                        My posts
+                                    </a>
+                                </li>
+                                <li>
                                     <a class="dropdown-item" href="{{route('posts.create')}}">Add post</a>
                                 </li>
+                            @endif
+                            @if(\Illuminate\Support\Facades\Auth::user()->hasRole('expert'))
+                                <li>
+                                    <a class="dropdown-item"
+                                       href="{{route('get_rate',\Illuminate\Support\Facades\Auth::user()->id)}}">
+                                        My review
+                                    </a>
+                                </li>
+                                <li>
                             @endif
                             <li><a class="dropdown-item"
                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Exit</a>
@@ -95,7 +107,7 @@
     </div>
 
 </nav>
-<div class="container py-4">
+<div class="container py-4 main">
     @yield('content')
 </div>
 </body>
