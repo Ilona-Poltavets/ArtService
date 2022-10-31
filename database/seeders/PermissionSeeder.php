@@ -36,16 +36,28 @@ class PermissionSeeder extends Seeder
             'label'=>'write_reviews'
         ]);
         DB::table('permissions')->insert([
-            'name'=>'Write comments',
-            'label'=>'write_comments'
+            'name'=>'Edit your profile',
+            'label'=>'edit_your_profile'
         ]);
         DB::table('permissions')->insert([
-            'name'=>'Write comments',
-            'label'=>'write_comments'
+            'name'=>'See rate',
+            'label'=>'see_rate'
         ]);
         DB::table('permissions')->insert([
-            'name'=>'Write comments',
-            'label'=>'write_comments'
+            'name'=>'Edit expert',
+            'label'=>'edit_expert'
+        ]);
+        DB::table('permissions')->insert([
+            'name'=>'Delete expert',
+            'label'=>'delete_expert'
+        ]);
+        DB::table('permissions')->insert([
+            'name'=>'See the number of expert reviews',
+            'label'=>'see_the_number_of_expert_reviews'
+        ]);
+        DB::table('permissions')->insert([
+            'name'=>'Change category for expert',
+            'label'=>'change_category_expert'
         ]);
     }
 }

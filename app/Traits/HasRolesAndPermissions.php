@@ -12,10 +12,10 @@ trait HasRolesAndPermissions
         return $this->belongsToMany(Role::class, 'users_roles');
     }
 
-    public function hasRole(...$roles)
+    public function hasRole(... $roles)
     {
         foreach ($roles as $role) {
-            if ($this->roles()->contains('label', $role)) {
+            if ($this->roles->contains('label', $role)) {
                 return true;
             }
         }
@@ -24,23 +24,24 @@ trait HasRolesAndPermissions
 
     public function hasPermission($permission)
     {
-        return (bool)$this->permissions->where('label', $permission)->count();
+        //dd($this->roles[0]->permissions);
+        return (bool)$this->roles[0]->permissions->where('label', $permission)->count();
     }
 
-    public function hasPermissionThroughRole($permission)
-    {
-        foreach ($permission->roles as $role) {
-            if ($this->roles->contains($role)) {
-                return true;
-            }
-        }
-        return false;
-    }
+//    public function hasPermissionThroughRole($permission)
+//    {
+//        foreach ($permission->roles as $role) {
+//            if ($this->roles->contains($role)) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
-    public function hasPermissionTo($permission)
-    {
-        return $this->hasPermissionThroughRole($permission) || $this->hasPermission($permission->label);
-    }
+//    public function hasPermissionTo($permission)
+//    {
+//        return $this->hasPermissionThroughRole($permission) || $this->hasPermission($permission->label);
+//    }
 
     public function getAllPermissions(array $permissions)
     {
