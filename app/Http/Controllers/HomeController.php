@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\Rate;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -137,6 +138,17 @@ class HomeController extends Controller
                 'category' => $cat,
             ]);
             return redirect()->route('posts.index')->with('successMsg', 'User has been created successfully');
+        } else {
+            return redirect()->route('posts.index')->with('fail', 'You dont have permission');
+        }
+    }
+
+    public function getRate($id)
+    {
+        if (Auth::user() && (Auth::user()->hasPermission('see_the_number_of_expert_reviews') || Auth::user()->id == $id)) {
+            $reviews = Rate::where('user_id', $id)->paginate(10);
+            $user = User::find($id);
+            return view('rates.index', ['reviews' => $reviews, 'user' => $user]);
         } else {
             return redirect()->route('posts.index')->with('fail', 'You dont have permission');
         }

@@ -21,7 +21,12 @@ class PostController extends Controller
 
     public function index()
     {
-        $data['posts'] = Post::paginate(10);
+        if (Auth::user() && Auth::user()->hasRole('expert')) {
+            $data['posts'] = Post::where('category', Auth::user()->expertData->category)->paginate(10);
+        }
+        else{
+            $data['posts'] = Post::paginate(10);
+        }
         return view('posts.index', $data);
     }
 

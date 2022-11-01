@@ -49,4 +49,7 @@ class User extends Authenticatable
     public function posts(){
         return $this->hasMany(Post::class);
     }
+    public function expertData(){
+        return $this->hasOne(Expert::class,'user_id','id');
+    }
 }
