@@ -1,9 +1,11 @@
-body{
+body {
     background-color: #718096;
 }
-.main{
+
+.main {
     background-color: white;
 }
+
 .content-tile {
     border: 0 solid black;
     border-radius: 10px;
@@ -101,4 +103,39 @@ hr {
     margin-right: auto;
     height: 50vh;
     max-width: 100%;
+}
+
+.comment-block {
+    border: 1px solid black;
+    border-radius: 10px;
+    margin:8px;
+    box-shadow: 5px 5px rgba(0, 0, 0, 0.5);
+}
+
+.comment-block__header{
+    padding: 5px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    background-color: #8a9caf;
+    color: white;
+    font-weight: bold;
+}
+
+.comment-block__body{
+    padding: 5px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.textareaComment {
+    border: 1px solid #2d2d2f;
+    border-radius: 10px;
+    min-height: 50px;
+    width: 100%;
+    margin-top: 10px;
+}
+.comment-block__answers{
+    border: 1px solid black;
+    border-radius: 10px;
+    margin-left: 30px;
 }

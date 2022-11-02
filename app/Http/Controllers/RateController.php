@@ -67,12 +67,13 @@ class RateController extends Controller
             $post->avr_mark_complexity = $avr_comp;
             $post->avr_mark_creativity = $avr_creativ;
             $post->avr_mark_innovativeness = $avr_innovat;
+            $post->rating=($avr_comp+$avr_creativ+$avr_innovat)/3;
             $post->save();
 
             $rate->save();
             return redirect()->route('posts.index')->with('success', 'Rate has been added');
         } else {
-            return redirect()->route('posts.index')->with('fail', 'You dont have permission');
+            return redirect()->route('posts.index')->withErrors(['You dont have permission'])->withInput();
         }
     }
 
@@ -110,12 +111,13 @@ class RateController extends Controller
             $post->avr_mark_complexity = $avr_comp;
             $post->avr_mark_creativity = $avr_creativ;
             $post->avr_mark_innovativeness = $avr_innovat;
+            $post->rating=($avr_comp+$avr_creativ+$avr_innovat)/3;
             $post->save();
 
             $rate->save();
             return redirect()->route('posts.index')->with('success', 'Rate has been added');
         } else {
-            return redirect()->route('posts.index')->with('fail', 'You dont have permission');
+            return redirect()->route('posts.index')->withErrors(['You dont have permission'])->withInput();
         }
     }
 }

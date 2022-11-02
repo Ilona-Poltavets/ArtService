@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comment;
 use App\Models\Post;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
 {
@@ -22,35 +25,53 @@ class PostController extends Controller
     public function index()
     {
         if (Auth::user() && Auth::user()->hasRole('expert')) {
-            $data['posts'] = Post::where('category', Auth::user()->expertData->category)->paginate(10);
+            $data = Post::where('category', Auth::user()->expertData->category)->orderBy('created_at', 'desc')->paginate(10);
+        } else {
+            $data = Post::orderBy('created_at', 'desc')->paginate(10);
         }
-        else{
-            $data['posts'] = Post::paginate(10);
-        }
-        return view('posts.index', $data);
+        return view('posts.index', ['posts' => $data, 'categories' => self::CATEGORIES]);
     }
 
     public function show($id)
     {
         $post = Post::find($id);
-        return view('posts.show', compact('post'));
+        $comments = Comment::where('post_id', $id)->get();
+        return view('posts.show', ['post' => $post, 'comments' => $comments]);
     }
 
     public function create()
     {
-        return view('posts.create', ['categories' => self::CATEGORIES]);
+        $lastPost = Post::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->first();
+        if (!$lastPost == null) {
+            $timePost = $lastPost->created_at;
+            $now = new DateTime('now');
+            $time = (24 * 60) * 60;
+            $interval = $now->getTimestamp() - $timePost->getTimestamp();
+            if ($interval > $time) {
+                return view('posts.create', ['categories' => self::CATEGORIES]);
+            } else {
+                return redirect()->route('posts.index')->withErrors(['You dont have permission'])->withInput();
+            }
+        } else {
+            return view('posts.create', ['categories' => self::CATEGORIES]);
+        }
     }
 
     public function edit($id)
     {
         $post = Post::find($id);
-        return view('posts.edit', [compact($post), 'categories' => self::CATEGORIES]);
+        return view('posts.edit', ['post' => $post, 'categories' => self::CATEGORIES]);
     }
 
     public function store(Request $request)
     {
         if (Auth::user() && Auth::user()->hasPermission('add_post')) {
-            $request->validate(self::VALIDATION_RULE);
+            $validator = Validator::make($request->all(), self::VALIDATION_RULE);
+            if ($validator->fails()) {
+                return redirect('post/create')
+                    ->withErrors($validator)
+                    ->withInput();
+            }
             $post = new Post();
 
             $rootPath = '';
@@ -68,9 +89,9 @@ class PostController extends Controller
             $post->category = $request->category;
             $post->user_id = Auth::user()->id;
             $post->save();
-            return redirect()->route('posts.index')->with('successMsg', 'Post has been created successfully');
+            return redirect()->route('posts.index')->with('Post has been created successfully');
         } else {
-            return redirect()->route('posts.index')->with('fail', 'You dont have permission');
+            return redirect()->route('posts.index')->withErrors(['You dont have permission'])->withInput();
         }
     }
 
@@ -78,7 +99,11 @@ class PostController extends Controller
     {
         $post = Post::find($id);
         if (Auth::user() && Auth::user()->id == $post->user_id) {
-            $request->validate(self::VALIDATION_RULE);
+            $validator = Validator::make($request->all(), self::VALIDATION_RULE);
+            if ($validator->fails()) {
+                return redirect('post/create')
+                    ->withErrors($validator);
+            }
 
             $rootPath = '';
             if ($request->file != null) {
@@ -96,9 +121,9 @@ class PostController extends Controller
             $post->title = $request->title;
             $post->category = $request->category;
             $post->save();
-            return redirect()->route('posts.index')->with('successMsg', 'Post has been edited successfully');
+            return redirect()->route('posts.index')->with('status', 'Post has been edited successfully');
         } else {
-            return redirect()->route('posts.index')->with('fail', 'You dont have permission');
+            return redirect()->route('posts.index')->withErrors(['You dont have permission'])->withInput();
         }
     }
 }

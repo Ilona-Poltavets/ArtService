@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class HomeController extends Controller
 {
@@ -47,8 +48,8 @@ class HomeController extends Controller
      */
     public function index($id)
     {
-        $data['posts'] = Post::where('user_id', $id)->paginate(10);
-        return view('posts.index', $data);
+        $data = Post::where('user_id', $id)->paginate(10);
+        return view('posts.index', ['posts' => $data, 'categories' => self::CATEGORIES]);
     }
 
     public function adminPanel()
@@ -66,12 +67,6 @@ class HomeController extends Controller
             $user->category = DB::table('experts')->where('user_id', $id)->value('category');
         }
         return view('users.show', ['user' => $user, 'categories' => self::CATEGORIES]);
-    }
-
-    public function getPosts($id)
-    {
-        $data['posts'] = Post::where('user_id', $id)->paginate(10);
-        return view('posts.index', $data);
     }
 
     public function save(Request $request, $id)
@@ -105,7 +100,7 @@ class HomeController extends Controller
             }
             return redirect()->route('posts.index')->with('successMsg', 'User has been created successfully');
         } else {
-            return redirect()->route('posts.index')->with('fail', 'You dont have permission');
+            return redirect()->route('posts.index')->withErrors(['You dont have permission'])->withInput();
         }
     }
 
@@ -139,7 +134,7 @@ class HomeController extends Controller
             ]);
             return redirect()->route('posts.index')->with('successMsg', 'User has been created successfully');
         } else {
-            return redirect()->route('posts.index')->with('fail', 'You dont have permission');
+            return redirect()->route('posts.index')->withErrors(['You dont have permission'])->withInput();
         }
     }
 
@@ -150,7 +145,17 @@ class HomeController extends Controller
             $user = User::find($id);
             return view('rates.index', ['reviews' => $reviews, 'user' => $user]);
         } else {
-            return redirect()->route('posts.index')->with('fail', 'You dont have permission');
+            return redirect()->route('posts.index')->withErrors(['You dont have permission'])->withInput();
         }
+    }
+
+    public function destroy($id)
+    {
+        $user = User::find($id);
+        Storage::deleteDirectory("images/$user->id");
+        Storage::deleteDirectory("sounds/$user->id");
+        Storage::deleteDirectory("files/$user->id");
+        $user->delete();
+        return redirect()->route('adminPanel')->with('status', 'User has been deleted successfully');
     }
 }

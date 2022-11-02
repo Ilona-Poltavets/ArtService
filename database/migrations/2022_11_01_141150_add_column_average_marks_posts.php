@@ -14,9 +14,10 @@ return new class extends Migration
     public function up()
     {
         Schema::table('posts', function (Blueprint $table) {
-            $table->integer('avr_mark_complexity')->default(0);
-            $table->integer('avr_mark_creativity')->default(0);
-            $table->integer('avr_mark_innovativeness')->default(0);
+            $table->float('avr_mark_complexity')->default(0);
+            $table->float('avr_mark_creativity')->default(0);
+            $table->float('avr_mark_innovativeness')->default(0);
+            $table->float('rating')->default(0);
         });
     }
 
@@ -28,7 +29,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('posts', function (Blueprint $table) {
-            $table->dropColumn(['avr_mark_complexity','avr_mark_creativity','avr_mark_innovativeness']);
+            $table->dropColumn(['avr_mark_complexity','avr_mark_creativity','avr_mark_innovativeness','rating']);
         });
     }
 };

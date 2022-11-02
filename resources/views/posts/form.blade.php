@@ -2,15 +2,23 @@
     <div class="col-md-8">
         <div class="card">
             <div class="card-body">
+
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <div class="row mb-3">
                     <label for="title" class="col-2 col-form-label">Title</label>
                     <div class="col-10">
                         <input id="title" name="title" class="form-control" type="text"
                                value="{{isset($post)?$post->title:''}}"/>
 
-                        @error('title')
-                        <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
-                        @enderror
                     </div>
                 </div>
 
@@ -31,9 +39,6 @@
                         </select>
                     </div>
 
-                    @error('file')
-                    <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
-                    @enderror
                 </div>
 
                 <div class="row mb-3">
@@ -42,9 +47,6 @@
                         <input name="file" class="form-control" type="file"/>
                     </div>
 
-                    @error('file')
-                    <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
-                    @enderror
                 </div>
 
                 <div class="row mb-0">

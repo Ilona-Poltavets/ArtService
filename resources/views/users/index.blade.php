@@ -2,6 +2,15 @@
 @section('title','Admin panel')
 @section('content')
     <a href="{{route('create_expert')}}" class="btn btn-outline-success">Add expert</a>
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     <table class="table">
         <thead>
         <tr>
