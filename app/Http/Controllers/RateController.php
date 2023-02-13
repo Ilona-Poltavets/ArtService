@@ -41,33 +41,37 @@ class RateController extends Controller
             $post = Post::find($postId);
             $rate->user_id = Auth::user()->id;
             $rate->post_id = $id;
-            $rate->mark_complexity = (int)$request->complexityRadio;
-            $rate->mark_creativity = (int)$request->creativityRadio;
-            $rate->mark_innovativeness = (int)$request->innovativenessRadio;
+            $rate->mark_complexity = (int) $request->complexityRadio;
+            $rate->mark_creativity = (int) $request->creativityRadio;
+            $rate->mark_innovativeness = (int) $request->innovativenessRadio;
             $rate->review = $request->review;
 
             $arr = DB::table('rates')->where('post_id', $id)->get()->toArray();
             if (count($arr) == 0) {
-                $avr_comp = (float)$request->complexityRadio;
-                $avr_creativ = (float)$request->creativityRadio;
-                $avr_innovat = (float)$request->innovativenessRadio;
+                $avr_comp = (float) $request->complexityRadio;
+                $avr_creativ = (float) $request->creativityRadio;
+                $avr_innovat = (float) $request->innovativenessRadio;
             } else {
-                $avr_comp = 0;
-                $avr_creativ = 0;
-                $avr_innovat = 0;
-                foreach ($arr as $item) {
-                    $avr_comp += $item->mark_complexity;
-                    $avr_creativ += $item->mark_creativity;
-                    $avr_innovat += $item->mark_innovativeness;
-                }
-                $avr_comp /= count($arr) + 1;
-                $avr_creativ /= count($arr) + 1;
-                $avr_innovat /= count($arr) + 1;
+                $average=calcAvg(array('avr_comp' => 0, 'avr_creativ' => 0, 'avr_innovat' => 0), $arr);
+                // $avr_comp = 0;
+                // $avr_creativ = 0;
+                // $avr_innovat = 0;
+                // $count=count($arr);
+
+                // foreach ($arr as $item) {
+                //     $avr_comp += $item->mark_complexity;
+                //     $avr_creativ += $item->mark_creativity;
+                //     $avr_innovat += $item->mark_innovativeness;
+                // }
+
+                // $avr_comp /= $count;
+                // $avr_creativ /= $count;
+                // $avr_innovat /= $count;
             }
-            $post->avr_mark_complexity = $avr_comp;
-            $post->avr_mark_creativity = $avr_creativ;
-            $post->avr_mark_innovativeness = $avr_innovat;
-            $post->rating=($avr_comp+$avr_creativ+$avr_innovat)/3;
+            $post->avr_mark_complexity = $average->avr_comp;
+            $post->avr_mark_creativity = $average->avr_creativ;
+            $post->avr_mark_innovativeness = $average->avr_innovat;
+            $post->rating = calcRating($average->avr_comp, $average->avr_creativ, $average->avr_innovat);
             $post->save();
 
             $rate->save();
@@ -75,6 +79,27 @@ class RateController extends Controller
         } else {
             return redirect()->route('posts.index')->withErrors(['You dont have permission'])->withInput();
         }
+    }
+
+    private function calcAvg($arr_marks, $arr)
+    {
+        $count = count($arr);
+
+        foreach ($arr as $item) {
+            $arr_marks->avr_comp += $item->mark_complexity;
+            $arr_marks->avr_creativ += $item->mark_creativity;
+            $arr_marks->avr_innovat += $item->mark_innovativeness;
+        }
+
+        $arr_marks->avr_comp /= $count;
+        $arr_marks->avr_creativ /= $count;
+        $arr_marks->avr_innovat /= $count;
+
+        return $arr_marks;
+    }
+    private function calcRating($avr_comp, $avr_creativ, $avr_innovat)
+    {
+        return ($avr_comp + $avr_creativ + $avr_innovat) / 3;
     }
 
     function store(Request $request, $id)
@@ -85,16 +110,16 @@ class RateController extends Controller
             $post = Post::find($id);
             $rate->user_id = Auth::user()->id;
             $rate->post_id = $id;
-            $rate->mark_complexity = (int)$request->complexityRadio;
-            $rate->mark_creativity = (int)$request->creativityRadio;
-            $rate->mark_innovativeness = (int)$request->innovativenessRadio;
+            $rate->mark_complexity = (int) $request->complexityRadio;
+            $rate->mark_creativity = (int) $request->creativityRadio;
+            $rate->mark_innovativeness = (int) $request->innovativenessRadio;
             $rate->review = $request->review;
 
             $arr = DB::table('rates')->where('post_id', $id)->get()->toArray();
             if (count($arr) == 0) {
-                $avr_comp = (float)$request->complexityRadio;
-                $avr_creativ = (float)$request->creativityRadio;
-                $avr_innovat = (float)$request->innovativenessRadio;
+                $avr_comp = (float) $request->complexityRadio;
+                $avr_creativ = (float) $request->creativityRadio;
+                $avr_innovat = (float) $request->innovativenessRadio;
             } else {
                 $avr_comp = 0;
                 $avr_creativ = 0;
@@ -111,7 +136,7 @@ class RateController extends Controller
             $post->avr_mark_complexity = $avr_comp;
             $post->avr_mark_creativity = $avr_creativ;
             $post->avr_mark_innovativeness = $avr_innovat;
-            $post->rating=($avr_comp+$avr_creativ+$avr_innovat)/3;
+            $post->rating = ($avr_comp + $avr_creativ + $avr_innovat) / 3;
             $post->save();
 
             $rate->save();

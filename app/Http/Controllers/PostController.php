@@ -72,27 +72,34 @@ class PostController extends Controller
                     ->withErrors($validator)
                     ->withInput();
             }
+
             $post = new Post();
+            save($post,$request);
 
-            $rootPath = '';
-            if ($request->category == 'music')
-                $rootPath = 'sounds/' . Auth::user()->id;
-            elseif ($request->category == 'art')
-                $rootPath = 'images/' . Auth::user()->id;
-            elseif ($request->category == 'literature')
-                $rootPath = 'files/' . Auth::user()->id;
-            if ($request->file('file') != null) {
-                $post->pathFile = ($request->file)->store($rootPath);
-            }
-
-            $post->title = $request->title;
-            $post->category = $request->category;
-            $post->user_id = Auth::user()->id;
-            $post->save();
             return redirect()->route('posts.index')->with('Post has been created successfully');
         } else {
             return redirect()->route('posts.index')->withErrors(['You dont have permission'])->withInput();
         }
+    }
+
+    public function save($post, $postRequest)
+    {
+        $rootPath = '';
+        
+        if ($postRequest->category == 'music')
+            $rootPath = 'sounds/' . Auth::user()->id;
+        elseif ($postRequest->category == 'art')
+            $rootPath = 'images/' . Auth::user()->id;
+        elseif ($postRequest->category == 'literature')
+            $rootPath = 'files/' . Auth::user()->id;
+        if ($postRequest->file('file') != null) {
+            $post->pathFile = ($postRequest->file)->store($rootPath);
+        }
+
+        $post->title = $postRequest->title;
+        $post->category = $postRequest->category;
+        $post->user_id = Auth::user()->id;
+        $post->save();
     }
 
     public function update(Request $request, $id)
@@ -105,22 +112,24 @@ class PostController extends Controller
                     ->withErrors($validator);
             }
 
-            $rootPath = '';
-            if ($request->file != null) {
-                if ($request->category == 'music')
-                    $rootPath = 'sounds/' . Auth::user()->id;
-                elseif ($request->category == 'art')
-                    $rootPath = 'images/' . Auth::user()->id;
-                elseif ($request->category == 'literature')
-                    $rootPath = 'files/' . Auth::user()->id;
-                if ($request->file('file') != null) {
-                    $post->pathFile = ($request->file)->store($rootPath);
-                }
-            }
+            save($post,$request);
 
-            $post->title = $request->title;
-            $post->category = $request->category;
-            $post->save();
+            // $rootPath = '';
+            // if ($request->file != null) {
+            //     if ($request->category == 'music')
+            //         $rootPath = 'sounds/' . Auth::user()->id;
+            //     elseif ($request->category == 'art')
+            //         $rootPath = 'images/' . Auth::user()->id;
+            //     elseif ($request->category == 'literature')
+            //         $rootPath = 'files/' . Auth::user()->id;
+            //     if ($request->file('file') != null) {
+            //         $post->pathFile = ($request->file)->store($rootPath);
+            //     }
+            // }
+
+            // $post->title = $request->title;
+            // $post->category = $request->category;
+            // $post->save();
             return redirect()->route('posts.index')->with('status', 'Post has been edited successfully');
         } else {
             return redirect()->route('posts.index')->withErrors(['You dont have permission'])->withInput();
